@@ -1,0 +1,14 @@
+{
+  "@@locale": "en",
+  "name": "English",
+  "appTitle": "Demo App",
+  "appDescription": "{flutter} is Awesome",
+  "@appDescription": {
+    "placeholders": {
+      "flutter": {
+        "type": "String",
+        "example": "Flutter"
+      }
+    }
+  }
+}

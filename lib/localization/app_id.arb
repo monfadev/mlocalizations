@@ -1,0 +1,14 @@
+{
+  "@@locale": "id",
+  "name": "Indonesia",
+  "appTitle": "Contoh App",
+  "appDescription": "{flutter} is Awesome",
+  "@appDescription": {
+    "placeholders": {
+      "flutter": {
+        "type": "String",
+        "example": "Flutter"
+      }
+    }
+  }
+}
