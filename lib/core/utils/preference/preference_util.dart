@@ -1,6 +1,6 @@
-import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:developer';
 
-import '../../viewmodels/localization/localization_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class PreferenceUtil {
   PreferenceUtil._private();
@@ -19,8 +19,14 @@ class PreferenceUtil {
     await _prefs.setString(localizationPref, languageCode);
   }
 
-  Future<String> getLocale() async {
-    String locale = _prefs.getString(localizationPref) ?? LocalizationEnum.localeEN.locale;
+  Future<String?> getLocale() async {
+    String locale = _prefs.getString(localizationPref) ?? '';
+    log('PREFERENCE UTIL (getLocale): $locale');
+
+    if (locale.isEmpty) {
+      return null;
+    }
+
     return locale;
   }
 }

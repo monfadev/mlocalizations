@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:mlocalizations/core/utils/extension/localization_extension.dart';
@@ -5,6 +7,7 @@ import 'package:mlocalizations/core/utils/preference/preference_util.dart';
 import 'package:provider/provider.dart';
 
 import 'core/viewmodels/localization/localization_provider.dart';
+import 'core/viewmodels/localization/notify_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -12,8 +15,11 @@ void main() async {
   await PreferenceUtil.instance.initializePreference();
 
   runApp(
-    ChangeNotifierProvider(
-      create: (context) => LocalizationProvider()..initialize(),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => LocalizationProvider()..initialize()),
+        ChangeNotifierProvider(create: (_) => NotifyProvider()),
+      ],
       child: const MyApp(),
     ),
   );
@@ -49,8 +55,35 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    if (state == AppLifecycleState.resumed) {
+      log('RESUMED');
+      context.read<LocalizationProvider>().localePlatform();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -77,7 +110,7 @@ class HomePage extends StatelessWidget {
                         ),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 15),
-                          child: Text("Bahasa", style: Theme.of(context).textTheme.headline6!.copyWith(fontWeight: FontWeight.w700)),
+                          child: Text("Bahasa", style: Theme.of(context).textTheme.titleLarge!.copyWith(fontWeight: FontWeight.w700)),
                         ),
                         ListTile(
                           title: const Text("English"),
@@ -179,7 +212,56 @@ class HomePage extends StatelessWidget {
             Text("languageCode: ${context.loc.localeName}", style: Theme.of(context).textTheme.headlineMedium),
             const SizedBox(height: 20),
             Text("Bahasa: ${context.loc.name}"),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const NavOne()));
+              },
+              child: Text('Goto: ${context.loc.navOne}'),
+            ),
           ],
+        ),
+      ),
+    ).localeNotify();
+  }
+}
+
+class NavOne extends StatelessWidget {
+  const NavOne({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(context.loc.navOne),
+      ),
+      body: Center(
+        child: ElevatedButton(
+          onPressed: () {
+            Navigator.push(context, MaterialPageRoute(builder: (context) => const NavTwo()));
+          },
+          child: Text('Goto: ${context.loc.navTwo}'),
+        ),
+      ),
+    );
+  }
+}
+
+class NavTwo extends StatelessWidget {
+  const NavTwo({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(context.loc.navTwo),
+      ),
+      body: Center(
+        child: ElevatedButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          child: Text('Back: ${context.loc.navOne}'),
         ),
       ),
     );
