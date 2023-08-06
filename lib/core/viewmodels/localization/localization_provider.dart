@@ -33,6 +33,9 @@ class LocalizationProvider extends ChangeNotifier {
       log('PROVIDER (initialize): $_locale');
 
       notifyListeners();
+    } else {
+      localePlatform();
+      log('PROVIDER (initialize):');
     }
   }
 
@@ -64,7 +67,7 @@ class LocalizationProvider extends ChangeNotifier {
   }
 
   Locale switchLocale(String languageCode) {
-    log('switchLocale: languageCode $languageCode');
+    log('PROVIDER (switchLocale): languageCode $languageCode');
 
     switch (languageCode) {
       case "en":
@@ -81,16 +84,16 @@ class LocalizationProvider extends ChangeNotifier {
   }
 
   void localePlatform() async {
-    log('localePlatform: builder');
-    log('localePlatform: $locale');
-    log('localePlatform: Platform.localeName ${Platform.localeName}');
-    log('localePlatform: getPref $getPref');
+    log('PROVIDER (localePlatform): builder');
+    log('PROVIDER (localePlatform): $locale');
+    log('PROVIDER (localePlatform): Platform.localeName ${Platform.localeName}');
+    log('PROVIDER (localePlatform): getPref $getPref');
 
     final getLocal = await getLocale();
-    log('localePlatform: getLocal $getLocal');
+    log('PROVIDER (localePlatform): getLocal $getLocal');
     if (getLocal == null) {
       if (getPref == null) {
-        log('localePlatform: getPref == null');
+        log('PROVIDER (localePlatform): getPref == null');
         if (Platform.localeName == 'id_ID') {
           switchLocale('id');
         } else if (Platform.localeName == 'en_US') {
@@ -98,7 +101,7 @@ class LocalizationProvider extends ChangeNotifier {
         }
         notifyListeners();
       } else {
-        log('localePlatform: getPref != null');
+        log('PROVIDER (localePlatform): getPref != null');
       }
     }
   }
